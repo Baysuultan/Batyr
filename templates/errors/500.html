@@ -1,12 +1,104 @@
 {% extends 'base.html' %}
 
-{% block title %}500 - Ошибка сервера{% endblock %}
+{% block title %}500 - Ошибка сервера - CourseHub{% endblock %}
 
 {% block content %}
-<div class="text-center py-5">
-    <h1 class="display-1 fw-bold text-danger">500</h1>
-    <h2 class="fw-bold mb-3">Ошибка сервера</h2>
-    <p class="text-muted mb-4">Что-то пошло не так. Пожалуйста, попробуйте позже.</p>
-    <a href="{% url 'pages:home' %}" class="btn btn-primary btn-lg">Вернуться на главную</a>
+<div class="error-container py-5" style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center;">
+    <div class="text-center">
+        <!-- Error Icon -->
+        <div class="error-icon mb-4">
+            <i class="fas fa-exclamation-triangle" style="font-size: 120px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+                                                           -webkit-background-clip: text;
+                                                           -webkit-text-fill-color: transparent;
+                                                           background-clip: text;
+                                                           opacity: 0.7;"></i>
+        </div>
+
+        <!-- Error Code -->
+        <h1 class="display-1 fw-bold" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+                                              -webkit-background-clip: text;
+                                              -webkit-text-fill-color: transparent;
+                                              background-clip: text;
+                                              margin-bottom: 0.5rem;">
+            500
+        </h1>
+
+        <!-- Error Heading -->
+        <h2 class="h2 fw-bold mb-3" style="color: #333;">
+            Ошибка сервера
+        </h2>
+
+        <!-- Error Description -->
+        <p class="lead text-muted mb-4" style="max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.8;">
+            К сожалению, на сервере произошла непредвиденная ошибка. 
+            Наши инженеры уже работают над решением проблемы. Пожалуйста, попробуйте позже.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 justify-content-center flex-wrap mb-5">
+            <button class="btn btn-lg btn-gradient fw-bold" onclick="location.reload();">
+                <i class="fas fa-redo me-2"></i> Попробовать снова
+            </button>
+            <a href="{% url 'pages:home' %}" class="btn btn-lg btn-outline-gradient fw-bold">
+                <i class="fas fa-home me-2"></i> На главную страницу
+            </a>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section mt-5 p-4" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+                                                    border-radius: 12px;
+                                                    max-width: 500px;
+                                                    margin-left: auto;
+                                                    margin-right: auto;
+                                                    border-left: 4px solid #e74c3c;">
+            <h5 class="fw-bold mb-2">Статус системы</h5>
+            <p class="text-muted small mb-3">Если проблема сохраняется, пожалуйста, свяжитесь с нами</p>
+            <a href="{% url 'pages:contact' %}" class="btn btn-sm btn-danger">
+                <i class="fas fa-envelope me-1"></i> Сообщить об ошибке
+            </a>
+        </div>
+    </div>
 </div>
+
+<style>
+.btn-outline-gradient {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-color: var(--accent);
+    color: white;
+}
+
+.btn-lg.btn-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-lg.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+    color: white;
+}
+</style>
+
 {% endblock %}

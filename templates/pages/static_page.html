@@ -1,14 +1,138 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ page.title }} - {{ block.super }}{% endblock %}
+{% block title %}{{ page.title }} - CourseHub{% endblock %}
 
 {% block content %}
+<!-- Page Header -->
+<div class="page-header mb-5" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                                     color: white;
+                                     padding: 3rem 2rem;
+                                     border-radius: 16px;">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-2">{{ page.title }}</h1>
+            <p class="lead mb-0" style="opacity: 0.9;">На платформе CourseHub</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <i class="fas fa-file-alt" style="font-size: 80px; opacity: 0.2;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
 <div class="row">
     <div class="col-lg-8 mx-auto">
-        <h1 class="fw-bold mb-4">{{ page.title }}</h1>
-        <div class="card shadow-sm p-4">
+        <div class="content-card p-5" style="background: white;
+                                           border-radius: 16px;
+                                           box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                           border: 1px solid rgba(52, 152, 219, 0.1);
+                                           line-height: 1.8;
+                                           color: #333;">
             {{ page.content|safe }}
         </div>
     </div>
 </div>
+
+<!-- Back Button -->
+<div class="text-center mt-5">
+    <a href="{% url 'pages:home' %}" class="btn btn-lg btn-outline-gradient fw-bold">
+        <i class="fas fa-arrow-left me-2"></i> Вернуться на главную
+    </a>
+</div>
+
+<style>
+.content-card h1, 
+.content-card h2, 
+.content-card h3 {
+    color: var(--primary);
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.content-card h1:first-child,
+.content-card h2:first-child,
+.content-card h3:first-child {
+    margin-top: 0;
+}
+
+.content-card p {
+    margin-bottom: 1rem;
+}
+
+.content-card ul,
+.content-card ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.content-card li {
+    margin-bottom: 0.5rem;
+}
+
+.content-card a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.content-card a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.content-card blockquote {
+    border-left: 4px solid var(--primary);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #666;
+}
+
+.content-card code {
+    background: rgba(52, 152, 219, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #e74c3c;
+    font-family: 'Courier New', monospace;
+}
+
+.content-card pre {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(230, 126, 34, 0.05) 100%);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.btn-outline-gradient {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-color: var(--accent);
+    color: white;
+}
+
+.page-header {
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
 {% endblock %}
