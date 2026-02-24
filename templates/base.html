@@ -9,167 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #3498db;
-            --secondary: #2c3e50;
-            --success: #27ae60;
-            --danger: #e74c3c;
-            --light-bg: #f8f9fa;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
-            overflow-x: hidden;
-        }
-        
-        /* Navbar Styles */
-        .navbar {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 0;
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white !important;
-            letter-spacing: 1px;
-        }
-        
-        .nav-link {
-            color: rgba(255,255,255,0.8) !important;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-link:hover {
-            color: white !important;
-        }
-        
-        .nav-link.active {
-            color: white !important;
-            border-bottom: 3px solid #fff;
-        }
-        
-        /* Main Content */
-        main {
-            flex: 1;
-            min-height: calc(100vh - 200px);
-            padding: 2rem 0;
-        }
-        
-        /* Footer */
-        footer {
-            background: var(--secondary);
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-        
-        .footer-section h5 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-        
-        .footer-link {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .footer-link:hover {
-            color: white;
-            padding-left: 5px;
-        }
-        
-        /* Cards */
-        .course-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        
-        .course-card-img {
-            height: 200px;
-            overflow: hidden;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        }
-        
-        .course-card-body {
-            padding: 1.5rem;
-        }
-        
-        .course-card .rating {
-            color: #f39c12;
-        }
-        
-        /* Buttons */
-        .btn-primary {
-            background: var(--primary);
-            border-color: var(--primary);
-            font-weight: 600;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            background: var(--secondary);
-            border-color: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-        }
-        
-        /* Messages */
-        .alert {
-            border-radius: 8px;
-            border: none;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-            
-            main {
-                padding: 1rem 0;
-            }
-            
-            .course-card-body {
-                padding: 1rem;
-            }
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link href="/static/css/style.css" rel="stylesheet">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -186,29 +27,48 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'pages:home' %}">Главная</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+                           href="{% url 'pages:home' %}">
+                            <i class="fas fa-home me-1"></i> Главная
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'list' %}active{% endif %}" href="{% url 'courses:list' %}">Курсы</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'list' %}active{% endif %}" 
+                           href="{% url 'courses:list' %}">
+                            <i class="fas fa-book me-1"></i> Курсы
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'pages:about' %}">О проекте</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" 
+                           href="{% url 'pages:about' %}">
+                            <i class="fas fa-info-circle me-1"></i> О проекте
+                        </a>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:profile' %}">
-                                <i class="fas fa-user-circle"></i> {{ user.username }}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:logout' %}">Выход</a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="userMenu">
+                                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">
+                                    <i class="fas fa-user"></i> Мой профиль
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Выход
+                                </a></li>
+                            </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:login' %}">Вход</a>
+                            <a class="nav-link" href="{% url 'accounts:login' %}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Вход
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:register' %}">Регистрация</a>
+                            <a class="nav-link" href="{% url 'accounts:register' %}">
+                                <i class="fas fa-user-plus me-1"></i> Регистрация
+                            </a>
                         </li>
                     {% endif %}
                 </ul>
@@ -221,7 +81,7 @@
         <div class="container-lg mt-3">
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
+                    <i class="fas fa-check-circle me-2"></i>{{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
@@ -240,43 +100,45 @@
         <div class="container-lg">
             <div class="row">
                 <div class="col-lg-3 col-md-6 footer-section">
-                    <h5>О CourseHub</h5>
-                    <p>Онлайн-портал для обучения и развития навыков через качественные курсы.</p>
+                    <h5>
+                        <i class="fas fa-graduation-cap me-2"></i>CourseHub
+                    </h5>
+                    <p>Платформа для обучения и развития навыков через качественные онлайн курсы.</p>
+                    <div class="social-links">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
                 </div>
                 <div class="col-lg-3 col-md-6 footer-section">
-                    <h5>Ссылки</h5>
+                    <h5><i class="fas fa-link me-2"></i>Быстрые ссылки</h5>
                     <ul class="list-unstyled">
                         <li><a href="{% url 'pages:home' %}" class="footer-link">Главная</a></li>
                         <li><a href="{% url 'courses:list' %}" class="footer-link">Курсы</a></li>
                         <li><a href="{% url 'pages:about' %}" class="footer-link">О проекте</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6 footer-section">
-                    <h5>Информация</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'pages:privacy' %}" class="footer-link">Конфиденциальность</a></li>
-                        <li><a href="{% url 'pages:terms' %}" class="footer-link">Условия</a></li>
                         <li><a href="{% url 'pages:contact' %}" class="footer-link">Контакты</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 footer-section">
-                    <h5>API</h5>
+                    <h5><i class="fas fa-shield-alt me-2"></i>Информация</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'pages:privacy' %}" class="footer-link">Конфиденциальность</a></li>
+                        <li><a href="{% url 'pages:terms' %}" class="footer-link">Условия использования</a></li>
+                        <li><a href="{% url 'pages:contact' %}" class="footer-link">Служба поддержки</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 footer-section">
+                    <h5><i class="fas fa-code me-2"></i>API</h5>
                     <ul class="list-unstyled">
                         <li><a href="/api/" class="footer-link">REST API</a></li>
                         <li><a href="/api/courses/" class="footer-link">Курсы API</a></li>
+                        <li><a href="/admin/" class="footer-link">Админ-панель</a></li>
                     </ul>
                 </div>
             </div>
-            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
-            <div class="row">
-                <div class="col-md-6">
-                    <p class="mb-0">&copy; 2026 CourseHub. Все права защищены.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <a href="#" class="footer-link me-3"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="footer-link me-3"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="footer-link"><i class="fab fa-linkedin"></i></a>
-                </div>
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; 2026 CourseHub. Все права защищены. | Разработано с <i class="fas fa-heart" style="color: var(--danger);"></i> для образования</p>
             </div>
         </div>
     </footer>
@@ -285,20 +147,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Тёмная тема
-        document.addEventListener('DOMContentLoaded', function() {
-            const theme = localStorage.getItem('theme') || 'light';
-            if (theme === 'dark') {
-                document.body.classList.add('dark-theme');
-            }
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({behavior: 'smooth'});
+                }
+            });
         });
-        
-        // Переключатель темы
-        function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const theme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
-        }
+
+        // Add fade-in animation to elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.course-card').forEach(card => {
+            observer.observe(card);
+        });
     </script>
     
     {% block extra_js %}{% endblock %}

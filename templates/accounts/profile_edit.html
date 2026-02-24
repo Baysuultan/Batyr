@@ -1,75 +1,269 @@
 {% extends 'base.html' %}
 
-{% block title %}Профиль Редактирование - {{ block.super }}{% endblock %}
+{% block title %}Редактирование профиля - CourseHub{% endblock %}
 
 {% block content %}
+<!-- Page Header -->
+<div class="page-header mb-5" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                                     color: white;
+                                     padding: 2rem;
+                                     border-radius: 16px;
+                                     display: flex;
+                                     align-items: center;
+                                     gap: 1.5rem;">
+    <div>
+        <i class="fas fa-user-edit" style="font-size: 2rem;"></i>
+    </div>
+    <div>
+        <h3 class="fw-bold mb-1">Редактирование профиля</h3>
+        <p class="mb-0" style="opacity: 0.9;">Обновлен ваши данные и информацию профиля</p>
+    </div>
+</div>
+
 <div class="row g-4">
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                {% if profile.user.avatar %}
-                    <img src="{{ profile.user.avatar.url }}" alt="{{profile.user.username}}" class="rounded-circle" width="150" height="150">
-                {% else %}
-                    <i class="fas fa-user-circle" style="font-size: 150px; color: #3498db;"></i>
-                {% endif %}
+    <!-- Avatar Preview -->
+    <div class="col-lg-4">
+        <div class="card" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 16px;">
+            <div class="card-body text-center p-4">
+                <h6 class="text-muted fw-bold mb-4">Ваш аватар</h6>
+                <div class="avatar-preview mb-4">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
+                             class="rounded-circle shadow-sm" width="140" height="140" style="object-fit: cover; border: 4px solid #f0f0f0;">
+                    {% else %}
+                        <div class="avatar-placeholder" style="width: 140px; 
+                                                               height: 140px; 
+                                                               margin: 0 auto;
+                                                               background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+                                                               border-radius: 50%;
+                                                               display: flex;
+                                                               align-items: center;
+                                                               justify-content: center;
+                                                               font-size: 60px;
+                                                               color: var(--primary);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <p class="text-muted small mb-0">Рекомендуемый размер: 300x300px</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card mt-4" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 16px;">
+            <div class="card-body p-4">
+                <h6 class="text-muted fw-bold mb-3">Статистика профиля</h6>
+                <div class="mb-3">
+                    <small class="text-muted">Статус верификации</small>
+                    <div><span class="badge bg-success" style="font-size: 0.8rem;"><i class="fas fa-check-circle me-1"></i> Верифицирован</span></div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Последнее обновление</small>
+                    <div><span class="fw-bold" style="font-size: 0.9rem;">Сегодня</span></div>
+                </div>
+                <div>
+                    <small class="text-muted">Тип аккаунта</small>
+                    <div><span class="fw-bold" style="font-size: 0.9rem;">{% if user.is_instructor %}Инструктор{% else %}Студент{% endif %}</span></div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-9">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Редактирование профиля</h5>
-            </div>
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data" novalidate>
+
+    <!-- Edit Form -->
+    <div class="col-lg-8">
+        <div class="card" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 16px;">
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="first_name" class="form-label">Имя</label>
-                            <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}">
+
+                    <!-- Name Fields -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label fw-bold">
+                                <i class="fas fa-edit me-1" style="color: var(--primary);"></i>Имя
+                            </label>
+                            <input type="text" id="first_name" name="first_name" class="form-control form-control-lg" 
+                                   value="{{ user.first_name }}" placeholder="Ваше имя">
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="last_name" class="form-label">Фамилия</label>
-                            <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="bio" class="form-label">О себе</label>
-                        <textarea id="bio" name="bio" class="form-control" rows="4">{{ profile.bio }}</textarea>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Телефон</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" value="{{ profile.phone }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="country" class="form-label">Страна</label>
-                            <input type="text" id="country" name="country" class="form-control" value="{{ profile.country }}">
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label fw-bold">
+                                <i class="fas fa-edit me-1" style="color: var(--accent);"></i>Фамилия
+                            </label>
+                            <input type="text" id="last_name" name="last_name" class="form-control form-control-lg" 
+                                   value="{{ user.last_name }}" placeholder="Ваша фамилия">
                         </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="avatar" class="form-label">Аватар</label>
-                        <input type="file" id="avatar" name="avatar" class="form-control" accept="image/*">
-                        {% if profile.user.avatar %}
-                            <small class="text-muted">Текущий аватар загружен</small>
-                        {% endif %}
+
+                    <!-- Email Field -->
+                    <div class="mb-4">
+                        <label for="email" class="form-label fw-bold">
+                            <i class="fas fa-envelope me-1" style="color: #f39c12;"></i>Email адрес
+                        </label>
+                        <input type="email" id="email" name="email" class="form-control form-control-lg" 
+                               value="{{ user.email }}" placeholder="example@mail.com">
                     </div>
-                    
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
-                        <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">Отмена</a>
+
+                    <!-- Bio/About -->
+                    <div class="mb-4">
+                        <label for="bio" class="form-label fw-bold">
+                            <i class="fas fa-quote-left me-1" style="color: #27ae60;"></i>О себе
+                        </label>
+                        <textarea id="bio" name="bio" class="form-control form-control-lg" 
+                                  rows="4" placeholder="Расскажите о себе...">{{ profile.bio }}</textarea>
+                        <small class="text-muted">Максимум 500 символов</small>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label fw-bold">
+                                <i class="fas fa-phone me-1" style="color: var(--primary);"></i>Телефон
+                            </label>
+                            <input type="tel" id="phone" name="phone" class="form-control form-control-lg" 
+                                   value="{{ profile.phone }}" placeholder="+7 (XXX) XXX-XX-XX">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="country" class="form-label fw-bold">
+                                <i class="fas fa-globe me-1" style="color: var(--accent);"></i>Страна
+                            </label>
+                            <input type="text" id="country" name="country" class="form-control form-control-lg" 
+                                   value="{{ profile.country }}" placeholder="Казахстан">
+                        </div>
+                    </div>
+
+                    <!-- Avatar Upload -->
+                    <div class="mb-4">
+                        <label for="avatar" class="form-label fw-bold mb-3">
+                            <i class="fas fa-image me-1" style="color: #27ae60;"></i>Изменить аватар
+                        </label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="avatar" name="avatar" class="form-control form-control-lg" 
+                                   accept="image/*" onchange="previewImage(event)">
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Поддерживаемые форматы: JPG, PNG, GIF (не более 5MB)
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions pt-4 border-top">
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary btn-lg fw-bold">
+                                <i class="fas fa-times me-2"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-gradient btn-lg fw-bold">
+                                <i class="fas fa-save me-2"></i> Сохранить изменения
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Security Section -->
+        <div class="card mt-4" style="border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 16px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-lock me-2" style="color: var(--primary);"></i>Безопасность
+                </h5>
+                <p class="text-muted mb-3">Управление параметрами безопасности вашего аккаунта</p>
+                <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-key me-2"></i> Изменить пароль
+                </a>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+.form-control, .form-select {
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+}
+
+.form-label {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    color: white;
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #ddd;
+    color: #666;
+}
+
+.btn-outline-secondary:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.file-upload-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload-wrapper input[type="file"] {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-wrapper input[type="file"]:hover {
+    border-color: var(--primary);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.page-header {
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.querySelector('.avatar-preview img');
+            if (preview) {
+                preview.src = e.target.result;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
 {% endblock %}

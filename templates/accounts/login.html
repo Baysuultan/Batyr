@@ -1,41 +1,242 @@
 {% extends 'base.html' %}
 
-{% block title %}Вход - {{ block.super }}{% endblock %}
+{% block title %}Вход в аккаунт - CourseHub{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
+<div class="auth-container">
+    <div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
         <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg p-4 my-5">
-                <h2 class="fw-bold text-center mb-4">Вход в аккаунт</h2>
-                
+            <!-- Auth Card -->
+            <div class="auth-card">
+                <!-- Header -->
+                <div class="auth-header text-center mb-4">
+                    <div class="gradient-icon mb-3">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h2 class="fw-bold mb-2">Добро пожаловать!</h2>
+                    <p class="text-muted">Войдите в ваш аккаунт для продолжения обучения</p>
+                </div>
+
+                <!-- Error Messages -->
                 {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Ошибка входа!</strong>
+                        {{ form.non_field_errors.0 }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 {% endif %}
-                
-                <form method="post" novalidate>
+
+                <!-- Login Form -->
+                <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
+
+                    <!-- Username Field -->
                     <div class="mb-3">
-                        <label for="id_username" class="form-label">Имя пользователя</label>
-                        <input type="text" class="form-control" id="id_username" name="username" required>
+                        <label for="id_username" class="form-label fw-bold">
+                            <i class="fas fa-user me-2" style="color: var(--primary);"></i>
+                            Имя пользователя
+                        </label>
+                        <input type="text" class="form-control form-control-lg" 
+                               id="id_username" name="username" 
+                               placeholder="Введите имя пользователя" required>
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
                     </div>
+
+                    <!-- Password Field -->
                     <div class="mb-3">
-                        <label for="id_password" class="form-label">Пароль</label>
-                        <input type="password" class="form-control" id="id_password" name="password" required>
+                        <label for="id_password" class="form-label fw-bold">
+                            <i class="fas fa-lock me-2" style="color: var(--accent);"></i>
+                            Пароль
+                        </label>
+                        <input type="password" class="form-control form-control-lg" 
+                               id="id_password" name="password" 
+                               placeholder="Введите пароль" required>
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                        {% endif %}
                     </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">Войти</button>
+
+                    <!-- Remember Me Checkbox -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me">
+                            <label class="form-check-label" for="remember_me">
+                                Запомнить меня
+                            </label>
+                        </div>
                     </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn btn-gradient btn-lg w-100 fw-bold mb-3">
+                        <i class="fas fa-sign-in-alt me-2"></i> Войти
+                    </button>
                 </form>
-                
-                <hr class="my-4">
-                <p class="text-center">
-                    Нет аккаунта? <a href="{% url 'accounts:register' %}">Зарегистрируйтесь</a>
-                </p>
+
+                <!-- Divider -->
+                <div class="divider my-4" style="text-align: center;">
+                    <span style="color: #999; font-size: 0.9rem;">или</span>
+                </div>
+
+                <!-- Register Link -->
+                <div class="text-center mb-3">
+                    <p class="mb-2">
+                        <i class="fas fa-question-circle me-1" style="color: #666;"></i>
+                        Нет аккаунта?
+                    </p>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-outline-gradient w-100 fw-bold">
+                        <i class="fas fa-user-plus me-2"></i> Создать новый аккаунт
+                    </a>
+                </div>
+
+                <!-- Help Link -->
+                <div class="text-center pt-3 border-top">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <a href="{% url 'pages:contact' %}" class="text-muted" style="text-decoration: none;">
+                            Проблемы со входом?
+                        </a>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Features Info -->
+            <div class="features-info mt-5 text-center">
+                <div class="row g-2">
+                    <div class="col-4">
+                        <div class="feature-mini">
+                            <i class="fas fa-lock"></i>
+                            <small>Безопасность</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="feature-mini">
+                            <i class="fas fa-shield-alt"></i>
+                            <small>Конфиденциальность</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="feature-mini">
+                            <i class="fas fa-check"></i>
+                            <small>Надежность</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.auth-container {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(230, 126, 34, 0.05) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+}
+
+.auth-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(52, 152, 219, 0.1);
+}
+
+.auth-header .gradient-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: white;
+    font-size: 28px;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+}
+
+.form-label {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    color: white;
+}
+
+.btn-outline-gradient {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-color: var(--accent);
+    color: white;
+}
+
+.divider {
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e8e8e8;
+}
+
+.divider span {
+    position: relative;
+    background: white;
+    padding: 0 1rem;
+}
+
+.feature-mini {
+    text-align: center;
+    color: #666;
+    padding: 0.5rem;
+}
+
+.feature-mini i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.1) 100%);
+    border: 2px solid #e74c3c;
+    color: #c0392b;
+}
+</style>
+
 {% endblock %}

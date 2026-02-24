@@ -1,70 +1,244 @@
 {% extends 'base.html' %}
 
-{% block title %}Курсы - {{ block.super }}{% endblock %}
+{% block title %}Все курсы - CourseHub{% endblock %}
 
 {% block content %}
-<h1 class="fw-bold mb-4">Все курсы</h1>
-
-<div class="row g-4 mb-4">
-    <div class="col-md-8">
-        <form method="get" class="d-flex gap-2">
-            <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Поиск курсов...">
-            <button type="submit" class="btn btn-primary">Поиск</button>
-        </form>
-    </div>
-    <div class="col-md-4">
-        <select name="level" class="form-select" onchange="this.form.submit()">
-            <option value="">Все уровни</option>
-            <option value="beginner" {% if level == 'beginner' %}selected{% endif %}>Начинающий</option>
-            <option value="intermediate" {% if level == 'intermediate' %}selected{% endif %}>Средний</option>
-            <option value="advanced" {% if level == 'advanced' %}selected{% endif %}>Продвинутый</option>
-        </select>
+<!-- Page Header -->
+<div class="py-5 mb-5" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; border-radius: 20px;">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-2">
+                <i class="fas fa-book-open me-2"></i> Все курсы
+            </h1>
+            <p class="lead mb-0">Найди и выбери лучший курс для развития своих навыков</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <i class="fas fa-graduation-cap" style="font-size: 80px; opacity: 0.2;"></i>
+        </div>
     </div>
 </div>
 
-<div class="row g-4">
-    {% for course in courses %}
-        <div class="col-lg-4 col-md-6">
-            <div class="course-card">
-                <div class="course-card-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    {% if course.thumbnail %}
-                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    {% endif %}
+<!-- Filters Section -->
+<section class="filters-section mb-5">
+    <div class="row g-3 align-items-end">
+        <div class="col-lg-6">
+            <form method="get" class="search-form">
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text" style="border: none; background: white;">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="search" value="{{ search }}" 
+                           class="form-control" placeholder="Поиск по названию курса..." style="border: none;">
+                    <button type="submit" class="btn btn-gradient">
+                        <i class="fas fa-search"></i> Поиск
+                    </button>
                 </div>
-                <div class="course-card-body">
-                    <span class="badge bg-info">{{ course.category.name }}</span>
-                    <h5 class="fw-bold mt-2">{{ course.title }}</h5>
-                    <p class="text-muted small mb-2">{{ course.description|truncatewords:15 }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <strong class="text-primary">{{ course.price }} ₸</strong>
-                        <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-primary">Подробнее</a>
+            </form>
+        </div>
+        
+        <div class="col-lg-3">
+            <select name="level" class="form-select form-select-lg" 
+                    onchange="document.location='?level='+this.value+(document.querySelector('[name=search]') ? '&search='+document.querySelector('[name=search]').value : '')">
+                <option value="">📚 Все уровни</option>
+                <option value="beginner" {% if level == 'beginner' %}selected{% endif %}>🌟 Начинающий</option>
+                <option value="intermediate" {% if level == 'intermediate' %}selected{% endif %}>⭐ Средний</option>
+                <option value="advanced" {% if level == 'advanced' %}selected{% endif %}>⭐⭐ Продвинутый</option>
+            </select>
+        </div>
+        
+        <div class="col-lg-3">
+            <select name="category" class="form-select form-select-lg" 
+                    onchange="document.location='?category='+this.value">
+                <option value="">🏷️ Все категории</option>
+                {% for category in categories %}
+                    <option value="{{ category.slug }}" {% if category_filter == category.slug %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</section>
+
+<!-- Courses Grid -->
+<section class="courses-grid">
+    {% if courses %}
+        <div class="row g-4">
+            {% for course in courses %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="course-card" style="animation: fadeInUp 0.6s ease-out;">
+                        <!-- Course Image -->
+                        <div class="course-card-img">
+                            {% if course.image %}
+                                <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-100 h-100" style="object-fit: cover;">
+                            {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
+                                    <i class="fas fa-book-open" style="font-size: 3rem; color: white; opacity: 0.5;"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Overlay with action button -->
+                            <div class="course-card-overlay">
+                                <a href="{% url 'courses:detail' course.slug %}" class="btn btn-light btn-sm">
+                                    <i class="fas fa-arrow-right me-1"></i> Подробнее
+                                </a>
+                            </div>
+                            
+                            <!-- Course Level Badge -->
+                            <div style="position: absolute; top: 10px; left: 10px; z-index: 10;">
+                                <span class="badge" style="background: var(--accent); font-size: 0.75rem; padding: 0.5rem 0.75rem;">
+                                    {{ course.get_level_display }}
+                                </span>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            {% if course.status == 'draft' %}
+                                <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                                    <span class="badge bg-warning">Черновик</span>
+                                </div>
+                            {% elif course.status == 'archived' %}
+                                <div style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                                    <span class="badge bg-danger">Архив</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Course Body -->
+                        <div class="course-card-body">
+                            <!-- Category Badge -->
+                            <div class="mb-2">
+                                <span class="badge bg-gradient-primary" style="font-size: 0.75rem;">
+                                    <i class="fas fa-tag me-1"></i> {{ course.category.name }}
+                                </span>
+                            </div>
+                            
+                            <!-- Title -->
+                            <h5 class="course-title mb-2">{{ course.title }}</h5>
+                            
+                            <!-- Description -->
+                            <p class="course-description small text-muted mb-3">
+                                {{ course.description|truncatewords:20 }}
+                            </p>
+                            
+                            <!-- Stats -->
+                            <div class="course-stats mb-3" style="font-size: 0.85rem; color: #666;">
+                                <div class="mb-2">
+                                    <span><i class="fas fa-graduation-cap me-1" style="color: var(--primary);"></i> {{ course.students_count }} студентов</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span><i class="fas fa-star me-1" style="color: #f39c12;"></i> {{ course.rating|floatformat:1 }}/5</span>
+                                    <span><i class="fas fa-clock me-1"></i> {{ course.duration_hours }} часов</span>
+                                </div>
+                            </div>
+                            
+                            <div class="divider"></div>
+                            
+                            <!-- Price and Action -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if course.price > 0 %}
+                                        <span class="price-text" style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">
+                                            {{ course.price }}₸
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success" style="font-size: 0.85rem; padding: 0.5rem 0.75rem;">
+                                            <i class="fas fa-gift me-1"></i> Бесплатно
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-gradient">
+                                    <i class="fas fa-play-circle"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-    {% empty %}
-        <div class="col-12 text-center py-5">
-            <p class="text-muted">Курсы не найдены</p>
+        
+        <!-- Pagination -->
+        {% if courses.has_other_pages %}
+            <nav aria-label="Навигация по страницам" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if courses.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{{ search|urlencode }}">
+                                <i class="fas fa-chevron-left me-1"></i> Первая
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ courses.previous_page_number }}{{ search|urlencode }}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in courses.paginator.page_range %}
+                        {% if courses.number == page_num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_num }}{{ search|urlencode }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if courses.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ courses.next_page_number }}{{ search|urlencode }}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ courses.paginator.num_pages }}{{ search|urlencode }}">
+                                Последняя <i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <!-- Empty State -->
+        <div class="empty-state text-center py-5">
+            <i class="fas fa-search" style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;"></i>
+            <h3 class="text-muted mb-3">Курсы не найдены</h3>
+            <p class="text-muted mb-4">Попробуй изменить фильтры или поисковый запрос</p>
+            <a href="{% url 'courses:list' %}" class="btn btn-gradient">
+                <i class="fas fa-repeat me-2"></i> Сбросить фильтры
+            </a>
         </div>
-    {% endfor %}
-</div>
+    {% endif %}
+</section>
 
-<!-- Pagination -->
-{% if courses.has_other_pages %}
-    <nav aria-label="Page navigation" class="mt-5">
-        <ul class="pagination justify-content-center">
-            {% if courses.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page=1">Первая</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ courses.previous_page_number }}">← Назад</a></li>
-            {% endif %}
-            
-            <li class="page-item active"><span class="page-link">{{ courses.number }}</span></li>
-            
-            {% if courses.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ courses.next_page_number }}">Вперёд →</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{ courses.paginator.num_pages }}">Последняя</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-{% endif %}
+<style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-form .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+</style>
+
 {% endblock %}

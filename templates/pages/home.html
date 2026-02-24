@@ -1,92 +1,189 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная{{ block.super }}{% endblock %}
+{% block title %}Главная - CourseHub{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<div class="row align-items-center my-5" style="min-height: 500px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; color: white; padding: 60px 40px;">
-    <div class="col-lg-6">
-        <h1 class="display-4 fw-bold mb-4">Учитесь онлайн с лучшими курсами</h1>
-        <p class="lead mb-4">Развивайте свои навыки с профессиональными инструкторами через качественное образование</p>
-        <div>
-            <a href="{% url 'courses:list' %}" class="btn btn-light btn-lg me-3">Смотреть курсы</a>
-            <a href="{% url 'pages:about' %}" class="btn btn-outline-light btn-lg">Узнать больше</a>
-        </div>
+<section class="hero-section">
+    <div class="blob-decoration blob-1"></div>
+    <div class="blob-decoration blob-2"></div>
+    
+    <h1 class="hero-title">
+        <span class="text-gradient">Учись</span> с лучшими менторами
+    </h1>
+    <p class="hero-subtitle">Развивай свои навыки через качественные онлайн курсы по программированию, дизайну и бизнесу</p>
+    
+    <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+        <a href="{% url 'courses:list' %}" class="btn btn-lg btn-gradient">
+            <i class="fas fa-book me-2"></i>Все курсы
+        </a>
+        <a href="{% url 'pages:about' %}" class="btn btn-lg btn-outline-light">
+            <i class="fas fa-info-circle me-2"></i>Узнать больше
+        </a>
     </div>
-    <div class="col-lg-6 text-center">
-        <i class="fas fa-graduation-cap" style="font-size: 150px; opacity: 0.3;"></i>
-    </div>
-</div>
+</section>
 
-<!-- Stats Section -->
-<div class="row text-center my-5">
-    <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded-4 shadow-sm">
-            <i class="fas fa-book" style="font-size: 2.5rem; color: #3498db;"></i>
-            <h3 class="fw-bold mt-3">{{ stats.total_courses }}+</h3>
-            <p class="text-muted">Курсов</p>
+<!-- Statistics Section -->
+<section class="py-5">
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3>{{ courses_count }}</h3>
+                <p>Качественных курсов</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>{{ total_students|default:"100" }}</h3>
+                <p>Активных студентов</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>4.9/5</h3>
+                <p>Средняя оценка курсов</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded-4 shadow-sm">
-            <i class="fas fa-users" style="font-size: 2.5rem; color: #27ae60;"></i>
-            <h3 class="fw-bold mt-3">10K+</h3>
-            <p class="text-muted">Студентов</p>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="p-4 bg-white rounded-4 shadow-sm">
-            <i class="fas fa-chalkboard-user" style="font-size: 2.5rem; color: #e74c3c;"></i>
-            <h3 class="fw-bold mt-3">50+</h3>
-            <p class="text-muted">Инструкторов</p>
-        </div>
-    </div>
-</div>
+</section>
 
-<!-- Featured Courses -->
-<div class="my-5">
-    <h2 class="fw-bold mb-4">Рекомендуемые курсы</h2>
-    <div class="row g-4">
-        {% for course in featured_courses %}
-            <div class="col-lg-4 col-md-6">
-                <div class="course-card">
-                    <div class="course-card-img">
-                        {% if course.thumbnail %}
-                            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                        {% else %}
-                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+<!-- Featured Courses Section -->
+<section class="featured-courses py-5">
+    <div class="section-header">
+        <h2>
+            <i class="fas fa-fire me-2"></i>
+            <span class="text-gradient">Популярные</span> курсы
+        </h2>
+        <p>Самые востребованные и рейтинговые курсы нашей платформы</p>
+    </div>
+    
+    {% if featured_courses %}
+        <div class="row g-4 mt-2">
+            {% for course in featured_courses %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="course-card">
+                        <div class="course-card-img">
+                            {% if course.image %}
+                                <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-100 h-100" style="object-fit: cover;">
+                            {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
+                                    <i class="fas fa-book-open" style="font-size: 3rem; color: white; opacity: 0.5;"></i>
+                                </div>
+                            {% endif %}
+                            <div class="course-card-overlay">
+                                <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-light">
+                                    <i class="fas fa-arrow-right me-1"></i>Подробнее
+                                </a>
                             </div>
-                        {% endif %}
-                    </div>
-                    <div class="course-card-body">
-                        <h5 class="fw-bold">{{ course.title }}</h5>
-                        <p class="text-muted small">{{ course.category.name }}</p>
-                        <div class="rating mb-2">
-                            {% for i in "12345" %}
-                                <i class="fas fa-star{% if i|add:0 > course.rating %}far{% endif %}"></i>
-                            {% endfor %}
-                            <span class="text-muted ms-2">({{ course.rating }})</span>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong class="text-primary">{{ course.price }} ₸</strong>
-                            <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-primary">Смотреть</a>
+                        <div class="course-card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-gradient-primary">{{ course.category.name }}</span>
+                                <span class="badge" style="background: var(--accent);">{{ course.level }}</span>
+                            </div>
+                            <h5 class="course-title">{{ course.title }}</h5>
+                            <p class="course-description">{{ course.description|truncatewords:15 }}</p>
+                            
+                            <div class="course-stats mb-3">
+                                <span><i class="fas fa-users"></i> {{ course.students_count }}</span>
+                                <span><i class="fas fa-star" style="color: #f39c12;"></i> {{ course.rating|floatformat:1 }}</span>
+                                <span><i class="fas fa-clock"></i> {{ course.duration_hours }}ч</span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if course.price > 0 %}
+                                    <span class="price-text" style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">
+                                        {{ course.price }}₸
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success">Бесплатно</span>
+                                {% endif %}
+                                <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-gradient">
+                                    <i class="fas fa-play-circle"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">Курсы скоро появятся!</p>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'courses:list' %}" class="btn btn-lg btn-gradient">
+                Смотреть все курсы <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            <i class="fas fa-info-circle me-2"></i>
+            Курсы скоро будут добавлены
+        </div>
+    {% endif %}
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-choose-us py-5">
+    <div class="section-header mb-5">
+        <h2>Почему выбирают CourseHub?</h2>
     </div>
-</div>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="feature-box">
+                <div class="feature-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h4>Видео уроки высокого качества</h4>
+                <p>Профессионально снятые видеоролики с четким объяснением каждой темы. Учись в своем темпе, повторяй необходимые части сколько угодно раз.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-box">
+                <div class="feature-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h4>Сертификаты об окончании</h4>
+                <p>Получи признанный сертификат при завершении курса. Подтверди свои знания и навыки потенциальным работодателям.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-box">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4>Сообщество учащихся</h4>
+                <p>Общайся с другими студентами, делись опытом и решай задачи вместе. Получай поддержку от преподавателей и сообщества.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="feature-box">
+                <div class="feature-icon">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <h4>Практические проекты</h4>
+                <p>Применяй полученные знания на интересных проектах. Создавай портфолио проектов для демонстрации работодателям.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- CTA Section -->
-<div class="bg-white p-5 rounded-4 shadow-sm text-center my-5">
-    <h3 class="fw-bold mb-3">Готовы начать обучение?</h3>
-    <p class="text-muted mb-4">Присоединитесь к тысячам студентов, которые уже обучаются на нашей платформе</p>
-    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Зарегистрироваться</a>
-</div>
+<section class="cta-section">
+    <div class="text-center">
+        <h2 class="mb-4">Готов начать обучение?</h2>
+        <p class="lead mb-4" style="font-size: 1.1rem;">Присоединись к тысячам студентов, которые уже развивают свои навыки на CourseHub</p>
+        <a href="{% url 'courses:list' %}" class="btn btn-lg btn-light">
+            <i class="fas fa-play-circle me-2"></i>Начать сейчас
+        </a>
+    </div>
+</section>
+
 {% endblock %}

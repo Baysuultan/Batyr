@@ -1,74 +1,249 @@
 {% extends 'base.html' %}
 
-{% block title %}Профиль - {{ block.super }}{% endblock %}
+{% block title %}Мой профиль - CourseHub{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
+<!-- Profile Header -->
+<div class="profile-header mb-5" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                                        color: white;
+                                        padding: 3rem 2rem;
+                                        border-radius: 20px;">
+    <div class="row align-items-center g-4">
+        <div class="col-md-4 text-center">
+            <div class="profile-avatar mb-3">
                 {% if user.avatar %}
-                    <img src="{{ user.avatar.url }}" alt="{{user.username}}" class="rounded-circle" width="150" height="150">
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" 
+                         class="rounded-circle shadow-lg" width="150" height="150" style="object-fit: cover; border: 4px solid white;">
                 {% else %}
-                    <i class="fas fa-user-circle" style="font-size: 150px; color: #3498db;"></i>
-                {% endif %}
-                <h4 class="fw-bold mt-3">{{ user.get_full_name|default:user.username }}</h4>
-                <p class="text-muted">@{{ user.username }}</p>
-                <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary w-100">Редактировать</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-9">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Мои курсы</h5>
-            </div>
-            <div class="card-body">
-                {% if my_courses %}
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Курс</th>
-                                    <th>Статус</th>
-                                    <th>Прогресс</th>
-                                    <th>Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for enrollment in my_courses %}
-                                    <tr>
-                                        <td>{{ enrollment.course.title }}</td>
-                                        <td><span class="badge bg-info">{{ enrollment.get_status_display }}</span></td>
-                                        <td>
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar" style="width: {{ enrollment.progress }}%">{{ enrollment.progress }}%</div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <a href="{% url 'courses:lessons' enrollment.course.slug %}" class="btn btn-sm btn-primary">Продолжить</a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="avatar-placeholder" style="width: 150px; height: 150px; 
+                                                           margin: 0 auto;
+                                                           background: rgba(255,255,255,0.2);
+                                                           border-radius: 50%;
+                                                           display: flex;
+                                                           align-items: center;
+                                                           justify-content: center;
+                                                           font-size: 80px;
+                                                           border: 4px solid white;">
+                        <i class="fas fa-user"></i>
                     </div>
-                {% else %}
-                    <p class="text-muted">Вы еще не записались ни на один курс</p>
-                    <a href="{% url 'courses:list' %}" class="btn btn-primary">Смотреть курсы</a>
                 {% endif %}
             </div>
         </div>
-        
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Информация</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>На платформе с:</strong> {{ user.created_at|date:"d.m.Y" }}</p>
-            </div>
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold mb-2">{{ user.get_full_name|default:user.username }}</h1>
+            <p style="font-size: 1.1rem; opacity: 0.9;">@{{ user.username }}</p>
+            <a href="{% url 'accounts:profile_edit' %}" class="btn btn-light btn-lg fw-bold">
+                <i class="fas fa-edit me-2"></i> Редактировать профиль
+            </a>
         </div>
     </div>
 </div>
+
+<div class="row g-4">
+    <!-- User Statistics -->
+    <div class="col-lg-4">
+        <!-- Stats Cards -->
+        <div class="stats-card mb-4">
+            <div class="stats-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h6 class="text-muted mb-1">Активных курсов</h6>
+            <h3 class="fw-bold mb-0">{{ active_courses_count|default:"0" }}</h3>
+        </div>
+        
+        <div class="stats-card mb-4">
+            <div class="stats-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h6 class="text-muted mb-1">Завершено курсов</h6>
+            <h3 class="fw-bold mb-0">{{ completed_courses_count|default:"0" }}</h3>
+        </div>
+        
+        <div class="stats-card">
+            <div class="stats-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h6 class="text-muted mb-1">Заработано сертификатов</h6>
+            <h3 class="fw-bold mb-0">{{ certificates_count|default:"0" }}</h3>
+        </div>
+
+        <!-- Account Info -->
+        <div class="account-info p-3 mt-4" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Информация аккаунта</h6>
+            
+            <div class="mb-3 pb-3" style="border-bottom: 1px solid #eee;">
+                <small class="text-muted d-block">Email</small>
+                <span class="fw-bold text-truncate" title="{{ user.email }}">{{ user.email }}</span>
+            </div>
+
+            <div class="mb-3 pb-3" style="border-bottom: 1px solid #eee;">
+                <small class="text-muted d-block">На платформе с</small>
+                <span class="fw-bold">
+                    {% if user.created_at %}
+                        {{ user.created_at|date:"d.m.Y" }}
+                    {% else %}
+                        Недавно
+                    {% endif %}
+                </span>
+            </div>
+
+            <div>
+                <small class="text-muted d-block">Статус</small>
+                <span class="badge bg-success" style="font-size: 0.85rem;">
+                    <i class="fas fa-check-circle me-1"></i> Активный
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Courses -->
+    <div class="col-lg-8">
+        <div class="white-card">
+            <div class="card-header-custom mb-4">
+                <h4 class="fw-bold mb-0">
+                    <i class="fas fa-book me-2"></i>Мои курсы
+                </h4>
+            </div>
+
+            {% if my_courses %}
+                <div class="courses-table">
+                    {% for enrollment in my_courses %}
+                        <div class="course-row mb-4 p-3" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid var(--primary);">
+                            <div class="row align-items-center g-3">
+                                <!-- Course Title -->
+                                <div class="col-md-5">
+                                    <h6 class="fw-bold mb-1">{{ enrollment.course.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-folder me-1"></i>
+                                        {{ enrollment.course.category.name }}
+                                    </small>
+                                </div>
+
+                                <!-- Progress -->
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block mb-1">Прогресс</small>
+                                    <div class="progress" style="height: 24px; border-radius: 8px; overflow: hidden;">
+                                        <div class="progress-bar" style="width: {{ enrollment.progress }}%; 
+                                                                         background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+                                                                         font-size: 0.75rem;
+                                                                         font-weight: 600;">
+                                            {{ enrollment.progress }}%
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-2">
+                                    <div>
+                                        {% if enrollment.status == 'completed' %}
+                                            <span class="badge bg-success" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
+                                                <i class="fas fa-check-circle me-1"></i> Завершено
+                                            </span>
+                                        {% elif enrollment.status == 'active' %}
+                                            <span class="badge bg-info" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
+                                                <i class="fas fa-play-circle me-1"></i> В процессе
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning" style="font-size: 0.8rem; padding: 0.5rem 0.75rem;">
+                                                <i class="fas fa-pause me-1"></i> Пауза
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Action Button -->
+                                <div class="col-md-2 text-md-end">
+                                    <a href="{% url 'courses:lessons' enrollment.course.slug %}" 
+                                       class="btn btn-sm btn-gradient" style="padding: 0.5rem 1rem;">
+                                        <i class="fas fa-play-circle me-1"></i>
+                                        {% if enrollment.progress >= 100 %}
+                                            Завершить
+                                        {% else %}
+                                            Продолжить
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- View All Button -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'courses:list' %}" class="btn btn-outline-gradient fw-bold">
+                        <i class="fas fa-arrow-right me-2"></i> Найти еще курсы
+                    </a>
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state text-center py-5">
+                    <i class="fas fa-book-reader" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                    <h5 class="text-muted mb-3">У вас нет активных курсов</h5>
+                    <p class="text-muted mb-4">Начните обучение, выбрав один из наших курсов</p>
+                    <a href="{% url 'courses:list' %}" class="btn btn-lg btn-gradient">
+                        <i class="fas fa-search me-2"></i> Смотреть все курсы
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-header {
+    animation: slideIn 0.6s ease-out;
+}
+
+.card-header-custom {
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(52, 152, 219, 0.2);
+}
+
+.course-row {
+    transition: all 0.3s ease;
+}
+
+.course-row:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
+}
+
+.btn-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    color: white;
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+}
+
+.btn-outline-gradient {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-color: var(--accent);
+    color: white;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
 {% endblock %}
