@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Уроки - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-4">{{ course.title }} - Уроки</h2>
+
+<div class="row g-4">
+    <div class="col-lg-3">
+        <div class="card shadow-sm sticky-top">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0">Содержание</h6>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for section in sections %}
+                    <div class="list-group-item">
+                        <strong class="text-primary">{{ section.title }}</strong>
+                        <div class="ms-2 mt-2">
+                            {% for lesson in section.lessons.all %}
+                                <a href="{% url 'courses:lesson_detail' lesson.slug %}" class="d-block small text-decoration-none mb-1">
+                                    <i class="fas fa-play-circle"></i> {{ lesson.title }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Прогресс обучения</h5>
+            </div>
+            <div class="card-body">
+                <div class="progress" style="height: 30px;">
+                    <div class="progress-bar bg-success" style="width: 45%">45%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <h6>Начните обучение!</h6>
+            <p>Выберите урок слева, чтобы начать просмотр материала.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
