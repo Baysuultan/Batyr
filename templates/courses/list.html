@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Курсы - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-4">Все курсы</h1>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-8">
+        <form method="get" class="d-flex gap-2">
+            <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Поиск курсов...">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <select name="level" class="form-select" onchange="this.form.submit()">
+            <option value="">Все уровни</option>
+            <option value="beginner" {% if level == 'beginner' %}selected{% endif %}>Начинающий</option>
+            <option value="intermediate" {% if level == 'intermediate' %}selected{% endif %}>Средний</option>
+            <option value="advanced" {% if level == 'advanced' %}selected{% endif %}>Продвинутый</option>
+        </select>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for course in courses %}
+        <div class="col-lg-4 col-md-6">
+            <div class="course-card">
+                <div class="course-card-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="course-card-body">
+                    <span class="badge bg-info">{{ course.category.name }}</span>
+                    <h5 class="fw-bold mt-2">{{ course.title }}</h5>
+                    <p class="text-muted small mb-2">{{ course.description|truncatewords:15 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong class="text-primary">{{ course.price }} ₸</strong>
+                        <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-primary">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">Курсы не найдены</p>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if courses.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if courses.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1">Первая</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ courses.previous_page_number }}">← Назад</a></li>
+            {% endif %}
+            
+            <li class="page-item active"><span class="page-link">{{ courses.number }}</span></li>
+            
+            {% if courses.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ courses.next_page_number }}">Вперёд →</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ courses.paginator.num_pages }}">Последняя</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}

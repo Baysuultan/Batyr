@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{user.username}}" class="rounded-circle" width="150" height="150">
+                {% else %}
+                    <i class="fas fa-user-circle" style="font-size: 150px; color: #3498db;"></i>
+                {% endif %}
+                <h4 class="fw-bold mt-3">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted">@{{ user.username }}</p>
+                <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary w-100">Редактировать</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Мои курсы</h5>
+            </div>
+            <div class="card-body">
+                {% if my_courses %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Курс</th>
+                                    <th>Статус</th>
+                                    <th>Прогресс</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for enrollment in my_courses %}
+                                    <tr>
+                                        <td>{{ enrollment.course.title }}</td>
+                                        <td><span class="badge bg-info">{{ enrollment.get_status_display }}</span></td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" style="width: {{ enrollment.progress }}%">{{ enrollment.progress }}%</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'courses:lessons' enrollment.course.slug %}" class="btn btn-sm btn-primary">Продолжить</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Вы еще не записались ни на один курс</p>
+                    <a href="{% url 'courses:list' %}" class="btn btn-primary">Смотреть курсы</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Информация</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>На платформе с:</strong> {{ user.created_at|date:"d.m.Y" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

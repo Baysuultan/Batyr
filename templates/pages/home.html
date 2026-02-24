@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{{ block.super }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center my-5" style="min-height: 500px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; color: white; padding: 60px 40px;">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4">Учитесь онлайн с лучшими курсами</h1>
+        <p class="lead mb-4">Развивайте свои навыки с профессиональными инструкторами через качественное образование</p>
+        <div>
+            <a href="{% url 'courses:list' %}" class="btn btn-light btn-lg me-3">Смотреть курсы</a>
+            <a href="{% url 'pages:about' %}" class="btn btn-outline-light btn-lg">Узнать больше</a>
+        </div>
+    </div>
+    <div class="col-lg-6 text-center">
+        <i class="fas fa-graduation-cap" style="font-size: 150px; opacity: 0.3;"></i>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row text-center my-5">
+    <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm">
+            <i class="fas fa-book" style="font-size: 2.5rem; color: #3498db;"></i>
+            <h3 class="fw-bold mt-3">{{ stats.total_courses }}+</h3>
+            <p class="text-muted">Курсов</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm">
+            <i class="fas fa-users" style="font-size: 2.5rem; color: #27ae60;"></i>
+            <h3 class="fw-bold mt-3">10K+</h3>
+            <p class="text-muted">Студентов</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm">
+            <i class="fas fa-chalkboard-user" style="font-size: 2.5rem; color: #e74c3c;"></i>
+            <h3 class="fw-bold mt-3">50+</h3>
+            <p class="text-muted">Инструкторов</p>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Courses -->
+<div class="my-5">
+    <h2 class="fw-bold mb-4">Рекомендуемые курсы</h2>
+    <div class="row g-4">
+        {% for course in featured_courses %}
+            <div class="col-lg-4 col-md-6">
+                <div class="course-card">
+                    <div class="course-card-img">
+                        {% if course.thumbnail %}
+                            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="course-card-body">
+                        <h5 class="fw-bold">{{ course.title }}</h5>
+                        <p class="text-muted small">{{ course.category.name }}</p>
+                        <div class="rating mb-2">
+                            {% for i in "12345" %}
+                                <i class="fas fa-star{% if i|add:0 > course.rating %}far{% endif %}"></i>
+                            {% endfor %}
+                            <span class="text-muted ms-2">({{ course.rating }})</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong class="text-primary">{{ course.price }} ₸</strong>
+                            <a href="{% url 'courses:detail' course.slug %}" class="btn btn-sm btn-primary">Смотреть</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">Курсы скоро появятся!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-white p-5 rounded-4 shadow-sm text-center my-5">
+    <h3 class="fw-bold mb-3">Готовы начать обучение?</h3>
+    <p class="text-muted mb-4">Присоединитесь к тысячам студентов, которые уже обучаются на нашей платформе</p>
+    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Зарегистрироваться</a>
+</div>
+{% endblock %}
