@@ -1,49 +1,214 @@
 {% extends 'base.html' %}
 
-{% block title %}Уроки - {{ block.super }}{% endblock %}
+{% block title %}{{ course.title }} - Уроки - CourseHub{% endblock %}
 
 {% block content %}
-<h2 class="fw-bold mb-4">{{ course.title }} - Уроки</h2>
+<!-- Course Header -->
+<div class="course-lesson-header mb-4" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                                               color: white;
+                                               padding: 2rem;
+                                               border-radius: 16px;">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold mb-1">{{ course.title }}</h3>
+            <p class="mb-0" style="opacity: 0.9;"><i class="fas fa-book me-1"></i>Материалы курса</p>
+        </div>
+        <div>
+            <span class="badge bg-light" style="color: var(--primary); font-size: 0.9rem; padding: 0.5rem 1rem;">
+                <i class="fas fa-graduation-cap me-1"></i> Всего уроков: {{ total_lessons }}
+            </span>
+        </div>
+    </div>
+</div>
 
 <div class="row g-4">
+    <!-- Sidebar - Table of Contents -->
     <div class="col-lg-3">
-        <div class="card shadow-sm sticky-top">
-            <div class="card-header bg-primary text-white">
-                <h6 class="mb-0">Содержание</h6>
+        <!-- Progress Card -->
+        <div class="progress-card sticky-top" style="background: white;
+                                                     border-radius: 16px;
+                                                     padding: 1.5rem;
+                                                     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                                     margin-bottom: 1.5rem;
+                                                     top: 20px;
+                                                     z-index: 10;">
+            <h6 class="fw-bold mb-3">
+                <i class="fas fa-chart-pie me-2" style="color: var(--primary);"></i>Ваш прогресс
+            </h6>
+            <div class="progress mb-3" style="height: 24px; border-radius: 8px; overflow: hidden;">
+                <div class="progress-bar" style="width: {{ progress }}%; 
+                                                 background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+                                                 font-size: 0.75rem;
+                                                 font-weight: 600;">
+                    {{ progress }}%
+                </div>
             </div>
-            <div class="list-group list-group-flush">
+            <small class="text-muted">Продолжайте обучение, чтобы получить сертификат</small>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="toc-card" style="background: white;
+                                    border-radius: 16px;
+                                    overflow: hidden;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div class="toc-header p-3" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                                               color: white;
+                                               border-bottom: none;">
+                <h6 class="fw-bold mb-0">
+                    <i class="fas fa-list me-2"></i>Содержание курса
+                </h6>
+            </div>
+
+            <div class="sections-list" style="max-height: calc(100vh - 300px); overflow-y: auto;">
                 {% for section in sections %}
-                    <div class="list-group-item">
-                        <strong class="text-primary">{{ section.title }}</strong>
-                        <div class="ms-2 mt-2">
-                            {% for lesson in section.lessons.all %}
-                                <a href="{% url 'courses:lesson_detail' lesson.slug %}" class="d-block small text-decoration-none mb-1">
-                                    <i class="fas fa-play-circle"></i> {{ lesson.title }}
-                                </a>
-                            {% endfor %}
+                    <div class="section-item">
+                        <div class="section-title p-3" style="background: rgba(52, 152, 219, 0.05);
+                                                             border-bottom: 1px solid #eee;
+                                                             font-weight: 600;
+                                                             color: var(--primary);
+                                                             cursor: pointer;" 
+                             data-bs-toggle="collapse" data-bs-target="#section-{{ section.id }}">
+                            <i class="fas fa-folder-open me-2"></i>{{ section.title }}
+                            <i class="fas fa-chevron-down float-end" style="font-size: 0.8rem;"></i>
+                        </div>
+                        
+                        <div class="collapse show" id="section-{{ section.id }}">
+                            <div class="lessons-list">
+                                {% for lesson in section.lessons.all %}
+                                    <a href="{% url 'courses:lesson_detail' lesson.slug %}" 
+                                       class="lesson-item p-3" 
+                                       style="display: block;
+                                               text-decoration: none;
+                                               color: #333;
+                                               border-bottom: 1px solid #f0f0f0;
+                                               transition: all 0.3s ease;">
+                                        <div class="d-flex align-items-start gap-2">
+                                            <i class="fas fa-play-circle" style="color: var(--primary); margin-top: 2px; font-size: 0.9rem;"></i>
+                                            <div class="flex-grow-1">
+                                                <small class="d-block fw-bold">{{ lesson.title }}</small>
+                                                <small class="text-muted">{{ lesson.duration_minutes }} мин</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
         </div>
     </div>
-    
+
+    <!-- Main Content -->
     <div class="col-lg-9">
-        <div class="card shadow-sm">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Прогресс обучения</h5>
+        <!-- Welcome Message -->
+        <div class="welcome-card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+                                         color: white;
+                                         padding: 2rem;
+                                         border-radius: 16px;
+                                         text-align: center;">
+            <i class="fas fa-play-circle" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.8;"></i>
+            <h4 class="fw-bold mb-2">Начните обучение</h4>
+            <p class="mb-3" style="opacity: 0.9;">Выберите урок из содержания слева, чтобы начать просмотр видео материалов и материалов курса</p>
+            
+            <div class="mt-4 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2);">
+                <small style="opacity: 0.8;"><i class="fas fa-lightbulb me-1"></i>Совет: Смотрите уроки последовательно для лучшего понимания материала</small>
             </div>
-            <div class="card-body">
-                <div class="progress" style="height: 30px;">
-                    <div class="progress-bar bg-success" style="width: 45%">45%</div>
+        </div>
+
+        <!-- Course Information Cards -->
+        <div class="row g-3 mt-2">
+            <div class="col-md-4">
+                <div class="info-card p-3" style="background: white;
+                                               border-radius: 12px;
+                                               box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                               border-left: 4px solid var(--primary);
+                                               text-align: center;">
+                    <i class="fas fa-book" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <h6 class="fw-bold">{{ sections.count }} разделов</h6>
+                    <small class="text-muted">структурированного контента</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-card p-3" style="background: white;
+                                               border-radius: 12px;
+                                               box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                               border-left: 4px solid var(--accent);
+                                               text-align: center;">
+                    <i class="fas fa-video" style="font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem;"></i>
+                    <h6 class="fw-bold">{{ total_lessons }} уроков</h6>
+                    <small class="text-muted">видео материала</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="info-card p-3" style="background: white;
+                                               border-radius: 12px;
+                                               box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                                               border-left: 4px solid #f39c12;
+                                               text-align: center;">
+                    <i class="fas fa-clock" style="font-size: 2rem; color: #f39c12; margin-bottom: 0.5rem;"></i>
+                    <h6 class="fw-bold">{{ course.duration_hours }}+ часов</h6>
+                    <small class="text-muted">общая продолжительность</small>
                 </div>
             </div>
         </div>
-        
-        <div class="alert alert-info mt-4">
-            <h6>Начните обучение!</h6>
-            <p>Выберите урок слева, чтобы начать просмотр материала.</p>
+
+        <!-- Back to Course -->
+        <div class="mt-4">
+            <a href="{% url 'courses:detail' course.slug %}" class="btn btn-outline-gradient fw-bold">
+                <i class="fas fa-arrow-left me-2"></i> Вернуться к деталям курса
+            </a>
         </div>
     </div>
 </div>
+
+<style>
+.lesson-item:hover {
+    background: rgba(52, 152, 219, 0.05);
+    border-left: 3px solid var(--primary);
+    padding-left: calc(3rem - 3px);
+}
+
+.sections-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sections-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.sections-list::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
+}
+
+.btn-outline-gradient {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-color: var(--accent);
+    color: white;
+}
+
+.course-lesson-header {
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
 {% endblock %}
