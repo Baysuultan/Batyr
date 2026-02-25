@@ -25,7 +25,11 @@ if not exist ".venv\Lib\site-packages\django" (
 
 REM Применяем миграции
 echo Применяю миграции...
-python manage.py migrate > nul 2>&1
+python manage.py migrate
+
+REM Собираем статические файлы
+echo Собираю статические файлы...
+python manage.py collectstatic --noinput
 
 REM Проверяем если БД пуста
 if not exist "db.sqlite3" (
